@@ -8,7 +8,8 @@ Base = declarative_base()
 # ✅ Use settings.database_url (lowercase)
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True
+    echo=False,
+    connect_args={"ssl": "require"}  # THIS FIXES THE ERROR
 )
 
 # Session factory
