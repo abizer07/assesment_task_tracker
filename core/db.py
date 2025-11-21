@@ -5,12 +5,12 @@ from core.config import settings
 
 Base = declarative_base()
 
+# Create async engine
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    settings.database_url,        # ← correct property
     echo=False,
-    pool_pre_ping=True,          # ← verify connection is alive
-    pool_recycle=300,            # ← recycle after 5 min ( < 60 s )
-    connect_args={"ssl": "require"},
+    pool_pre_ping=True,
+    pool_recycle=300              # ← safe recycle time
 )
 
 # Session factory
