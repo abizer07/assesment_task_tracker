@@ -1,0 +1,37 @@
+services:
+  task_tracker_db:
+    image: postgres:15
+    container_name: task_tracker_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  task_tracker_api:
+    build: .
+    container_name: task_tracker_api
+    restart: always
+    depends_on:
+      task_tracker_db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"          # 👈 UPDATED PORT
+    env_file:
+      - .env
+    command: uvicorn main:app --host 0.0.0.0 --port 8081 --reload   # 👈 UPDATED PORT
+    volumes:
+      - .:/app
+      - /app/__pycache__
+
+volumes:
+  postgres_data:
