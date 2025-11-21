@@ -1,36 +1,19 @@
-services:
-  task_tracker_db:
-    image: postgres:15
-    container_name: task_tracker_db
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 3s
-      timeout: 5s
-      retries: 5
+version: "3.9"
 
+services:
   task_tracker_api:
     build: .
     container_name: task_tracker_api
     restart: always
-    depends_on:
-      task_tracker_db:
-        condition: service_healthy
     ports:
       - "8050:8050"
     env_file:
       - .env
     command: uvicorn main:app --host 0.0.0.0 --port 8050 --reload
     volumes:
-      - .:/app     # this is enough
+      - .:/app
 
-volumes:
-  postgres_data:
+    # Fix DNS resolution for Render Postgres
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
