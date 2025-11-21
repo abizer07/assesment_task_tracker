@@ -5,11 +5,12 @@ from core.config import settings
 
 Base = declarative_base()
 
-# ✅ Use settings.database_url (lowercase)
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,
-    connect_args={"ssl": "require"}  # THIS FIXES THE ERROR
+    pool_pre_ping=True,          # ← verify connection is alive
+    pool_recycle=300,            # ← recycle after 5 min ( < 60 s )
+    connect_args={"ssl": "require"},
 )
 
 # Session factory
