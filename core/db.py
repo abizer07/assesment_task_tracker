@@ -7,7 +7,7 @@ Base = declarative_base()
 
 # ✅ Use settings.database_url (lowercase)
 engine = create_async_engine(
-    settings.database_url,
+    settings.DATABASE_URL,
     echo=True
 )
 
